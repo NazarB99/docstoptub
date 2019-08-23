@@ -1,0 +1,23 @@
+{
+  "name": "StopTubDoc",
+  "displayName": "StopTubDoc",
+  "connectyCubeConfig": [
+    {
+      "appId": 1062,
+      "authKey": "BAbrTW5Hbjarx7R",
+      "authSecret": "we4XJKfXePpBeAD"
+    },
+    {
+      "chat": {
+        "streamManagement": {
+            "enable": "true"
+        }
+    }
+    },
+    {
+      "debug": {
+        "mode": 1
+      }
+    }
+  ]
+}
