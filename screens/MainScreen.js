@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 /* eslint-disable no-unused-expressions */
 /* eslint-disable import/named */
 /* eslint-disable react/destructuring-assignment */
@@ -58,6 +59,7 @@ class MainScreen extends Component {
       appIsActive: true,
       waitConnect: false,
       loading: false,
+      refreshing: false,
     }
 
     this.pushService
@@ -330,9 +332,13 @@ class MainScreen extends Component {
 
   // getNotCompleted = () => this.props.current_user.patients.filter(item => item.is_done !== true)
 
-  renderItem = item => (
-    <Card patient={item} />
-  )
+  renderItem = item => <Card patient={item} />
+
+  onRefresh = () => {
+    // this.setState({refreshing: true})
+    const {getPatients, current_user} = this.props
+    getPatients(current_user.user.token)
+  }
 
   render() {
     return this.state.loading || this.props.current_user.loading ? (
@@ -350,6 +356,8 @@ class MainScreen extends Component {
     ) : (
       <View style={{flex: 1}}>
         <FlatList
+          refreshing={this.props.current_user.loading}
+          onRefresh={this.onRefresh}
           data={this.props.current_user.patients}
           keyExtractor={item => item.id}
           renderItem={({item}) => this.renderItem(item)}
@@ -380,9 +388,9 @@ class MainScreen extends Component {
               borderRadius: 40,
             }}
             onPress={() => {
-              this.props.navigation.navigate('Dialog')
+              this.props.navigation.navigate('AddPatient')
             }}
-            icon={<Icon name="comment-dots" size={30} color={GREY_COLOR} />}
+            icon={<Icon name="plus" size={30} color={GREY_COLOR} />}
           />
         </View>
       </View>

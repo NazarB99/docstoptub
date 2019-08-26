@@ -20,11 +20,11 @@ import Icon from 'react-native-vector-icons/FontAwesome5'
 
 import LoginScreen from './screens/LoginScreen'
 import MainScreen from './screens/MainScreen'
-import MedicationScreen from './screens/MedicationScreen'
-import CheckUpScreen from './screens/CheckUpScreen'
-import DialogsScreen from './screens/DialogsScreen'
-import ChatScreen from './screens/ChatScreen'
-import VideoScreen from './screens/VideoScreen'
+import TasksScreen from './screens/TasksScreen'
+import AddTaskScreen from './screens/AddTaskScreen'
+import AddTemplateScreen from './screens/AddTemplateScreen'
+import TemplateScreen from './screens/TemplateScreen'
+import AddPatientScreen from './screens/AddPatientScreen'
 import {store, persistor} from './store'
 import {MAIN_COLOR, GREY_COLOR} from './config/Constants'
 
@@ -39,30 +39,30 @@ const StackNav = createStackNavigator(
   {
     Login: LoginScreen,
     Main: MainScreen,
-    Dialog: DialogsScreen,
-    Chat: ChatScreen,
-    Video: VideoScreen,
+    AddPatient: AddPatientScreen,
   },
   {
     initialRouteName: 'Login',
   }
 )
 
-const MedStack = createStackNavigator(
+const TaskNavigator = createStackNavigator(
   {
-    Medication: MedicationScreen,
+    Task: TasksScreen,
+    AddTask: AddTaskScreen,
   },
   {
-    initialRouteName: 'Medication',
+    initialRouteName: 'Task',
   }
 )
 
-const CheckUpStack = createStackNavigator(
+const TemplateNavigator = createStackNavigator(
   {
-    CheckUp: CheckUpScreen,
+    Template: TemplateScreen,
+    AddTemplate: AddTemplateScreen,
   },
   {
-    initialRouteName: 'CheckUp',
+    initialRouteName: 'Template',
   }
 )
 
@@ -74,16 +74,16 @@ const TabNav = createBottomTabNavigator(
         tabBarIcon: ({tintColor}) => <Icon name="home" size={20} color={tintColor} />,
       },
     },
-    Medication: {
-      screen: MedStack,
+    Task: {
+      screen: TaskNavigator,
       navigationOptions: {
-        tabBarIcon: ({tintColor}) => <Icon name="pills" size={20} color={tintColor} />,
+        tabBarIcon: ({tintColor}) => <Icon name="thumbtack" size={20} color={tintColor} />,
       },
     },
-    CheckUp: {
-      screen: CheckUpStack,
+    Template: {
+      screen: TemplateNavigator,
       navigationOptions: {
-        tabBarIcon: ({tintColor}) => <Icon name="user-md" size={20} color={tintColor} />,
+        tabBarIcon: ({tintColor}) => <Icon name="tasks" size={20} color={tintColor} />,
       },
     },
   },

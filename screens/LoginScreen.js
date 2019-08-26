@@ -72,6 +72,7 @@ class LoginScreen extends Component {
           <Input
             autoCapitalize="none"
             placeholder="Password"
+            secureTextEntry
             onChangeText={text => {
               this.onChangeText(text, 'password')
             }}

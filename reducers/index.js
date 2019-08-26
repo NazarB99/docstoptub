@@ -5,6 +5,8 @@ import chatSelectedReducer from './chatSelectedReducer'
 import chatUserReducer from './chatUserReducer'
 import chatVideoReducer from './chatVideoReducer'
 import userReducer from './userReducer'
+import tasksReducer from './tasksReducer'
+import templateReducer from './templateReducer'
 
 export default {
   chat_connection: chatConnectionReducer,
@@ -14,4 +16,6 @@ export default {
   chat_user: chatUserReducer,
   videosession: chatVideoReducer,
   user: userReducer,
+  tasks: tasksReducer,
+  templates: templateReducer,
 }

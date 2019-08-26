@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 /* eslint-disable no-unused-expressions */
 /* eslint-disable import/named */
 /* eslint-disable react/destructuring-assignment */
@@ -8,18 +9,39 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable react/prefer-stateless-function */
 import React, {Component} from 'react'
-import {View, ActivityIndicator, Alert, FlatList} from 'react-native'
+import {View, AppState, ActivityIndicator, Alert, FlatList} from 'react-native'
 import {Button} from 'react-native-elements'
 import Icon from 'react-native-vector-icons/FontAwesome5'
+import ConnectyCube from 'connectycube-reactnative'
 import {connect} from 'react-redux'
 // import Accordion from 'react-native-collapsible/Accordion';
 
 import {MAIN_COLOR, GREY_COLOR} from '../config/Constants'
-import Card from '../components/Card'
+import TaskCard from '../components/TaskCard'
+import appConfig from '../app.json'
+import Message from '../models/Message'
+// import User from '../config/UserConfig'
+import Chat from '../config/ChatConfig'
+import CallingService from '../config/CallingConfig'
 // import PushNotificationService from '../config/PushNotificationConfig'
-import {getUsersSchedule, markAsDone} from '../actions/userActions'
+import {userLogin} from '../actions/chatUserActions'
+import {fetchDialogs, sortDialogs} from '../actions/chatDialogsActions'
+import {chatConnected, chatDisconnected} from '../actions/chatConnectionActions'
+import {pushMessage} from '../actions/chatMessagesActions'
+import {getTasks} from '../actions/tasksActions'
+import {
+  userIsCalling,
+  videoSessionObtained,
+  clearVideoSession,
+  localVideoStreamObtained,
+  remoteVideoStreamObtained,
+  setActiveVideoDevice,
+  clearVideoStreams,
+  setMediaDevices,
+  callInProgress,
+} from '../actions/chatVideoActions'
 
-class CheckUp extends Component {
+class TasksScreen extends Component {
   static navigationOptions = ({navigation}) => ({
     title: navigation.getParam('title') || '',
     headerStyle: {
@@ -34,43 +56,33 @@ class CheckUp extends Component {
     super(props)
 
     this.state = {
+      appIsActive: true,
+      waitConnect: false,
       loading: false,
     }
-
-    this.pushService
   }
 
-  markTaskAsDone = (id, title) => {
-    const {token} = this.props.current_user.user
-
-    Alert.alert('Отметить как сделаное?', `Отметить ${title} как сделаное?`, [
-      {
-        text: 'Да',
-        onPress: () => {
-          this.props.markAsDone(id, token)
-          this.props.getUsersSchedule(token)
-        },
-      },
-      {text: 'Нет', style: 'cancel'},
-    ])
+  componentDidMount() {
+    this.props.getTasks(this.props.current_user.user.token)
   }
 
-  getNotCompleted = () =>
-    this.props.current_user.schedules.filter(
-      item => item.is_done !== true && item.type !== 'treatment'
-    )
+  // getNotCompleted = () => this.props.current_user.patients.filter(item => item.is_done !== true)
 
-  renderItem = item => (
-    <Card markDone={() => this.markTaskAsDone(item.id, item.title)} schedule={item} />
-  )
+  renderItem = item => <TaskCard task={item} />
+
+  onRefresh = () => {
+    // this.setState({refreshing: true})
+    const {getTasks, current_user} = this.props
+    getTasks(current_user.user.token)
+  }
 
   render() {
-    return this.props.current_user.loading ? (
+    return this.state.loading || this.props.tasks.loading ? (
       <View
         style={{
           flex: 1,
-          paddingLeft: 10,
-          paddingRight: 10,
+          // paddingLeft: 10,
+          // paddingRight: 10,
           alignItems: 'center',
           justifyContent: 'center',
         }}
@@ -78,10 +90,11 @@ class CheckUp extends Component {
         <ActivityIndicator color={MAIN_COLOR} size="large" />
       </View>
     ) : (
-      <View style={{flex: 1, paddingLeft: 10, paddingRight: 10}}>
+      <View style={{flex: 1}}>
         <FlatList
-          data={this.getNotCompleted()}
-          extraData={this.props.current_user.schedules}
+          refreshing={this.props.tasks.loading}
+          onRefresh={this.onRefresh}
+          data={this.props.tasks.tasks}
           keyExtractor={item => item.id}
           renderItem={({item}) => this.renderItem(item)}
           showsVerticalScrollIndicator={false}
@@ -111,9 +124,9 @@ class CheckUp extends Component {
               borderRadius: 40,
             }}
             onPress={() => {
-              this.props.navigation.navigate('Dialog')
+              this.props.navigation.navigate('AddTask')
             }}
-            icon={<Icon name="comment-dots" size={30} color={GREY_COLOR} />}
+            icon={<Icon name="plus" size={30} color={GREY_COLOR} />}
           />
         </View>
       </View>
@@ -122,19 +135,15 @@ class CheckUp extends Component {
 }
 
 const mapStateToProps = state => ({
-  connected: state.chat_connection,
-  user: state.chat_user,
-  selected: state.chat_selected,
-  dialogs: state.chat_dialogs,
+  tasks: state.tasks,
   current_user: state.user,
 })
 
 const mapDispatchToProps = dispatch => ({
-  getUsersSchedule: token => dispatch(getUsersSchedule(token)),
-  markAsDone: (id, token) => dispatch(markAsDone(id, token)),
+  getTasks: token => dispatch(getTasks(token)),
 })
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(CheckUp)
+)(TasksScreen)

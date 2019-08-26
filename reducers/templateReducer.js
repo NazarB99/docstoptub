@@ -1,31 +1,23 @@
 /* eslint-disable react/static-property-placement */
-import {FETCH_USER, SET_LOADING, GET_PATIENTS, SET_ERROR} from '../actions/type/types'
+import {SET_LOADING_TEMPLATES, GET_TEMPLATES, SET_ERROR} from '../actions/type/types'
 
 const initialState = {
-  user: {},
-  patients: [],
+  templates: [],
   error: {},
   loading: false,
 }
 
 export default function(state = initialState, action) {
   switch (action.type) {
-    case FETCH_USER:
-      return {
-        ...state,
-        user: action.payload,
-        error: {},
-        loading: false,
-      }
-    case SET_LOADING:
+    case SET_LOADING_TEMPLATES:
       return {
         ...state,
         loading: true,
       }
-    case GET_PATIENTS:
+    case GET_TEMPLATES:
       return {
         ...state,
-        patients: action.payload,
+        templates: action.payload,
         error: {},
         loading: false,
       }
